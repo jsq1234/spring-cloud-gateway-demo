@@ -15,6 +15,7 @@ public class UserNotFoundException extends RuntimeException {
 
     public UserNotFoundException(String message, HttpStatus status) {
         super(message);
+        this.message = message;
         this.status = status;
     }
 

@@ -12,10 +12,12 @@ import com.demo.gateway.config.JwtUtils.UserInfo;
 
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter implements GlobalFilter {
 
     private final JwtUtils jwtUtils;
@@ -36,6 +38,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
         String jwtToken = getAuthHeader(request);
 
+        log.info("Found jwt token : {}", jwtToken);
         // // Get claims from jwt token
         // Claims claims = jwtUtils.getClaimsFromToken(jwtToken).orElse(null);
 
@@ -48,9 +51,11 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         // // arises
         // attachUserIdToResponse(request, claims);
 
+        log.info("Redirecting authentication to user-service....");
         var userInfo = jwtUtils.validateJwt(jwtToken);
 
         if (userInfo == null) {
+            log.info("Access denied, user doesn't exists");
             return sendError(response, HttpStatus.UNAUTHORIZED);
         }
 
@@ -73,7 +78,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
     }
 
     private void attachUserIdToResponse(ServerHttpRequest request, UserInfo userInfo) {
-        request.mutate().header("user_id", userInfo.email())
+        request.mutate().header("user_id", userInfo.userId())
                 .header("email", userInfo.email()).build();
 
     }

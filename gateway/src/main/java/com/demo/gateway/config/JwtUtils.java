@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import io.jsonwebtoken.Claims;
@@ -16,6 +17,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +25,7 @@ import java.util.UUID;
 import javax.crypto.SecretKey;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtUtils {
     // @Value("${jwt.secret}")
@@ -51,12 +54,13 @@ public class JwtUtils {
     }
 
     public UserInfo validateJwt(String jwtToken) {
-        String userServiceUrl = "http://user-service:8081/validate?=" + jwtToken;
-        ResponseEntity<UserInfo> responseEntity = restTemplate.getForEntity(userServiceUrl, UserInfo.class);
-
-        if (responseEntity.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+        try {
+            String userServiceUrl = "http://user-service:8081/validate?token=" + jwtToken;
+            ResponseEntity<UserInfo> responseEntity = restTemplate.getForEntity(userServiceUrl, UserInfo.class);
+            return responseEntity.getBody();
+        } catch (HttpClientErrorException e) {
+            log.info("Error from user-service: {}", e.getMessage(), e.getResponseBodyAsString());
             return null;
         }
-        return responseEntity.getBody();
     }
 }
