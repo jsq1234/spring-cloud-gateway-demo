@@ -7,6 +7,11 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -29,4 +34,10 @@ public class TokenService {
                 .signWith(key)
                 .compact();
     }
+
+    public Optional<Claims> getClaimsFromToken(String token) {
+        JwtParser jwtParser = Jwts.parser().verifyWith(key).build();
+        return Optional.of(jwtParser.parseSignedClaims(token).getPayload());
+    }
+
 }

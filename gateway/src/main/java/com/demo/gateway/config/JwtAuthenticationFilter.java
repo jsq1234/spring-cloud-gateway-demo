@@ -8,6 +8,8 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.demo.gateway.config.JwtUtils.UserInfo;
+
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -34,17 +36,25 @@ public class JwtAuthenticationFilter implements GlobalFilter {
 
         String jwtToken = getAuthHeader(request);
 
-        // Get claims from jwt token
-        Claims claims = jwtUtils.getClaimsFromToken(jwtToken).orElse(null);
+        // // Get claims from jwt token
+        // Claims claims = jwtUtils.getClaimsFromToken(jwtToken).orElse(null);
 
-        // claims == null implies parsing of jwt valid, thus an invalid jwt token
-        if (claims == null) {
+        // // claims == null implies parsing of jwt valid, thus an invalid jwt token
+        // if (claims == null) {
+        // return sendError(response, HttpStatus.UNAUTHORIZED);
+        // }
+
+        // // add userId to the request so that the proxied service can use it if need
+        // // arises
+        // attachUserIdToResponse(request, claims);
+
+        var userInfo = jwtUtils.validateJwt(jwtToken);
+
+        if (userInfo == null) {
             return sendError(response, HttpStatus.UNAUTHORIZED);
         }
 
-        // add userId to the request so that the proxied service can use it if need
-        // arises
-        attachUserIdToResponse(request, claims);
+        attachUserIdToResponse(request, userInfo);
 
         return chain.filter(exchange);
     }
@@ -62,9 +72,10 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         return response.setComplete();
     }
 
-    private void attachUserIdToResponse(ServerHttpRequest request, Claims claims) {
-        String userId = claims.getSubject();
-        request.mutate().header("user_id", userId).build();
+    private void attachUserIdToResponse(ServerHttpRequest request, UserInfo userInfo) {
+        request.mutate().header("user_id", userInfo.email())
+                .header("email", userInfo.email()).build();
+
     }
 
 }
