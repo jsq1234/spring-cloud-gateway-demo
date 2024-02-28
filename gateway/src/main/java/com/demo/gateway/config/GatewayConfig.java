@@ -10,11 +10,13 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("auth-service",
+                .route("user-service",
                         r -> r.path("/auth/register")
+                                .filters(f -> f.stripPrefix(1))
                                 .uri("http://localhost:8081/"))
                 .route("posts-service",
                         r -> r.path("/posts/**")
+                                .filters(f -> f.stripPrefix(1))
                                 .uri("http://localhost:8082/"))
                 .build();
     }
