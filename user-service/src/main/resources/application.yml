@@ -16,6 +16,14 @@ spring:
 
 server:
   port: 8081
+
+
+# Logging Levels
+logging:
+  level:
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{15} - %msg%n"
   
 jwt:
   secret: AvHGRK8C0ia4uOuxxqPD5DTbWC9F9TWvPStp3pb7ARo0oK2mJ3pd3YG4lxA9i8bj6OTbadweheufHNyG

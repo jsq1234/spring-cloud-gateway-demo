@@ -3,6 +3,7 @@ package com.demo.userservice.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.demo.userservice.dto.RegisterBody;
 import com.demo.userservice.model.User;
 import com.demo.userservice.repository.UserRepository;
 
@@ -16,9 +17,12 @@ public class UserService {
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
 
-    public String registerUser(User user) {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+    public String registerUser(RegisterBody userInfo) {
+        String encodedPassword = passwordEncoder.encode(userInfo.password());
+        User user = User.builder()
+                .email(userInfo.email())
+                .password(encodedPassword)
+                .build();
         userRepository.save(user);
         return tokenService.generateJwtToken(user.getUserId());
     }

@@ -56,6 +56,12 @@
 			<version>0.12.5</version>
 		</dependency>
 
+		<!-- Add Logging dependency -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-logging</artifactId>
+		</dependency>
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

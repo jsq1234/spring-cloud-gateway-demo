@@ -13,11 +13,11 @@ public class GatewayConfig {
                 .route("user-service",
                         r -> r.path("/auth/register")
                                 .filters(f -> f.stripPrefix(1))
-                                .uri("http://localhost:8081/"))
+                                .uri("http://user-service:8081/"))
                 .route("posts-service",
                         r -> r.path("/posts/**")
                                 .filters(f -> f.stripPrefix(1))
-                                .uri("http://localhost:8082/"))
+                                .uri("http://posts-service:8082/"))
                 .build();
     }
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +17,16 @@ import lombok.RequiredArgsConstructor;
 @Table(name = "posts")
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final Long id;
+    private Long id;
 
     @Column(nullable = false, name = "user_id")
-    private final UUID userId;
+    private UUID userId;
 
     @Column(nullable = false)
-    private final String message;
+    private String message;
 }
