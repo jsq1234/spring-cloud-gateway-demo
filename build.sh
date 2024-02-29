@@ -1,10 +1,10 @@
 #!/bin/zsh
 
-echo "Creating docker image for gateway"
+echo "$(tput bold)$(tput setaf 6)Creating docker image for gateway$(tput sgr0)"
 docker build -t gateway-image ./gateway
 
-echo "Creating docker image for user-service"
+echo "$(tput bold)$(tput setaf 6)Creating docker image for user-service$(tput sgr0)"
 docker build -t user-service-image ./user-service
 
-echo "Creating docker image for posts-service"
+echo "$(tput bold)$(tput setaf 6)Creating docker image for posts-service$(tput sgr0)"
 docker build -t posts-service-image ./posts-service
