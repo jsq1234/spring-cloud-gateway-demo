@@ -14,13 +14,9 @@ services:
     container_name: user-service
     expose:
       - 8081
-    ports:
-      - 8081:8081
   
   posts-service:
     image: posts-service-image
     container_name: posts-service
     expose:
       - 8082
-    ports:
-      - 8082:8082

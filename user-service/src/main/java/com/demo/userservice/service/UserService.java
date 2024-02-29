@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.demo.userservice.dto.RegisterBody;
 import com.demo.userservice.dto.UserInfo;
+import com.demo.userservice.exception.EmptyPasswordException;
 import com.demo.userservice.exception.UserNotFoundException;
 import com.demo.userservice.model.User;
 import com.demo.userservice.repository.UserRepository;
@@ -23,13 +24,17 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public String registerUser(RegisterBody userInfo) {
-        String encodedPassword = passwordEncoder.encode(userInfo.password());
-        User user = User.builder()
-                .email(userInfo.email())
-                .password(encodedPassword)
-                .build();
-        userRepository.save(user);
-        return tokenService.generateJwtToken(user.getUserId());
+        try {
+            String encodedPassword = passwordEncoder.encode(userInfo.password());
+            User user = User.builder()
+                    .email(userInfo.email())
+                    .password(encodedPassword)
+                    .build();
+            userRepository.save(user);
+            return tokenService.generateJwtToken(user.getUserId());
+        } catch (IllegalArgumentException e) {
+            throw new EmptyPasswordException("No password.");
+        }
     }
 
     public UserInfo verifyUser(String jwtToken) {
